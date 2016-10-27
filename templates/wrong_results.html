@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+      <h2>The word was: {{sourceWord}}</h2>
+      {% for word_key, word_value in words.items() %}
+            <p style="color: {{word_value.color}}">{{ word_value.word }}</p>
+      {% endfor %}
+      {% block top_ten %}
+      {% endblock %}
+      <div onclick="window.location.href = '/'" style="cursor: pointer; padding: 10px; color: blue;width: 136px;border: blue thin solid;">
+            Click me to try again
+      </div>
+{% endblock %}

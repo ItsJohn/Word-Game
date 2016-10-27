@@ -1,0 +1,12 @@
+
+{% block body %}
+      <h2>Top 10 Scorers List</h2>
+      {% for user_value in top_ten_scorers %}
+      <p>
+            <b>{{ loop.index }}.</b>
+            Name: {{user_value.name}}
+            Time: {{user_value.display_time}}
+      </p>
+      {% endfor %}
+      <h2>You ranked {{position}}</h2>
+{% endblock %}
