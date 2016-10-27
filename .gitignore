@@ -1,20 +1,4 @@
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Gist
- @ItsJohn
- Watch 1,852
-  Star 42,447
-  Fork 17,034 github/gitignore
- Code  Pull requests 174  Projects 0  Pulse  Graphs
-Branch: master Find file Copy pathgitignore/Python.gitignore
-d8a1d41  18 hours ago
- Matt Braymer-Hayes Rename 'IPython Notebook' comment to 'Jupyter Notebook'
-50 contributors @arcresu @Metallicow @svkampen @shiftkey @toanant @misaelnieto @EvandroLG @Harrison-G @vltr @hugovk @Lucretiel @matheussl @hippo91 @manavm @rayshan @llonchj @kdeldycke @jspahrsummers @honzajavorek @reinout @roll @relekang @geogdog @gsnedders @xiaogaozi @adamv and others
-RawBlameHistory
-91 lines (72 sloc)  1.03 KB
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
