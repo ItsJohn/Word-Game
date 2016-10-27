@@ -1,54 +1,49 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
+from operator import itemgetter
+from collections import Counter
 import pickle
 import random
 import time
 import os.path
-from operator import itemgetter
-from collections import Counter
+import parse_words
 
 app = Flask(__name__)
-
-with open('pickle/source_words.pickle', 'rb') as ph:
-    source_words = pickle.load(ph)
-
-with open('pickle/dictionary.pickle', 'rb') as ph:
-    dictionary = pickle.load(ph)
-
-current_user = {
-    'name': None,
-    'start_time': None,
-    'end_time': None,
-    'total_time': None
-}
 
 
 @app.route('/')
 def start_app():
-    current_user['start_time'] = time.time() * 1000
+    if os.path.isfile('pickle/source_words.pickle'):
+        with open('pickle/source_words.pickle', 'rb') as ph:
+            source_words = pickle.load(ph)
+    else:
+        parse_words.create_selected_word_dictionary()
+    session.setdefault('selected_word', '')
+    session.setdefault('current_user', {})
+    session['selected_word'] = random.choice(source_words)
+    session['current_user']['start_time'] = time.time() * 1000
     return render_template('entries.html',
-                                    title='Word Game',
-                                    sourceWord=random.choice(source_words))
+                                    title=session['selected_word'] + ' | Word Game',
+                                    sourceWord=session['selected_word'])
 
 
 @app.route('/checkscore', methods=['POST'])
 def process_the_data():
-    current_user['end_time'] = time.time() * 1000
-    user_input = request.form.to_dict()
-    selected_word = user_input['source_word']
-    del user_input['source_word']
+    session['current_user']['end_time'] = time.time() * 1000
+    session.setdefault('user_input', {})
+    session['user_input'] = request.form.to_dict()
+    valid_word = validate_input_duplicates(session['user_input'])
 
-    valid_word = validate_input_duplicates(user_input)
     if valid_word:
-        valid_word, user_input = validate_input(user_input, selected_word)
+        valid_word, session['user_input'] = validate_input(session['user_input'], session['selected_word'])
 
     if valid_word is False:
         return render_template('wrong_results.html',
-                                        sourceWord=selected_word,
-                                        words=user_input)
-    current_user['total_time'] = current_user['end_time'] -current_user['start_time']
+                                        sourceWord=session['selected_word'],
+                                        words=session['user_input'])
+
+    session['current_user']['total_time'] = session['current_user']['end_time'] -session['current_user']['start_time']
     return render_template('right_answer.html',
-                                    selected_word=selected_word,
-                                    words=user_input)
+                                    selected_word=session['selected_word'])
 
 
 @app.route('/topscorerslist', methods=['POST'])
@@ -59,18 +54,18 @@ def join_the_scoreboard():
             top_scorers_list = pickle.load(ph)
     else:
         top_scorers_list = []
-    current_user['name'] = user_input['name']
-    current_user['display_time'] = calculate_display_time(current_user['total_time'])
-    top_scorers_list.append(current_user)
+    session['current_user']['name'] = user_input['name']
+    session['current_user']['display_time'] = calculate_display_time(session['current_user']['total_time'])
+    top_scorers_list.append(session['current_user'])
     with open('pickle/top_scorers_list.pickle', 'wb') as ph:
         pickle.dump(top_scorers_list, ph)
     sorted_list = sorted(top_scorers_list, key=itemgetter('total_time', 'start_time'), reverse=False)
 
     return render_template('top_ten.html',
-                                    words=user_input['words'],
-                                    selected_word=user_input['selected_word'],
+                                    words=session['user_input'],
+                                    selected_word=session['selected_word'],
                                     top_ten_scorers=sorted_list[:10],
-                                    position=sorted_list.index(current_user) + 1)
+                                    position=sorted_list.index(session['current_user']) + 1)
 
 
 
@@ -88,6 +83,7 @@ def validate_input(user_input, selected_word):
                 'color': 'red'
             }
             valid_word = False
+
     return valid_word, user_input
 
 def validate_input_length(word):
@@ -105,13 +101,19 @@ def validate_input_duplicates(all_values):
     return len(set(all_values)) == 7
 
 def validate_input_in_dictionary(word):
+    if os.path.isfile('pickle/dictionary.pickle'):
+        with open('pickle/dictionary.pickle', 'rb') as ph:
+            dictionary = pickle.load(ph)
+    else:
+        parse_words.create_dictionary()
     return word in dictionary
 
 def calculate_display_time(milliseconds):
-    seconds = int((current_user['total_time'] / 1000) % 60)
-    minutes = int(((current_user['total_time'] / (1000*60)) % 60))
-    hours   = int(((current_user['total_time'] / (1000*60*60)) % 24))
+    seconds = int((session['current_user']['total_time'] / 1000) % 60)
+    minutes = int(((session['current_user']['total_time'] / (1000*60)) % 60))
+    hours   = int(((session['current_user']['total_time'] / (1000*60*60)) % 24))
     return str(hours) + ':' + str(minutes) + ':' + str(seconds)
 
 if __name__ == '__main__':
+    app.config['SECRET_KEY'] = 'THISISMYSECRETKEY'
     app.run(debug=True)
