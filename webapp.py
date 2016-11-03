@@ -22,8 +22,7 @@ def start_app():
     session['selected_word'] = random.choice(source_words)
     session['current_user']['start_time'] = time.time() * 1000
     return render_template('entries.html',
-                                    title=session['selected_word'] + ' | Word Game',
-                                    sourceWord=session['selected_word'])
+                                    title=session['selected_word'] + ' | Word Game')
 
 
 @app.route('/checkscore', methods=['POST'])
@@ -42,8 +41,7 @@ def process_the_data():
                                         words=session['user_input'])
 
     session['current_user']['total_time'] = session['current_user']['end_time'] -session['current_user']['start_time']
-    return render_template('right_answer.html',
-                                    selected_word=session['selected_word'])
+    return render_template('right_answer.html')
 
 
 @app.route('/topscorerslist', methods=['POST'])
@@ -91,9 +89,10 @@ def validate_input_length(word):
 
 def validate_input_characters(word, selected_word):
     valid_word = True
-
+    s = Counter(selected_word)
+    w = Counter(word)
     for letter in word:
-        if letter not in selected_word:
+        if letter not in selected_word or w[letter] > s[letter]:
             valid_word = False
     return valid_word
 
@@ -110,8 +109,8 @@ def validate_input_in_dictionary(word):
 
 def calculate_display_time(milliseconds):
     seconds = int((session['current_user']['total_time'] / 1000) % 60)
-    minutes = int(((session['current_user']['total_time'] / (1000*60)) % 60))
-    hours   = int(((session['current_user']['total_time'] / (1000*60*60)) % 24))
+    minutes = int((session['current_user']['total_time'] / (1000*60)) % 60)
+    hours   = int((session['current_user']['total_time'] / (1000*60*60)) % 24)
     return str(hours) + ':' + str(minutes) + ':' + str(seconds)
 
 if __name__ == '__main__':

@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
 <form action="/checkscore" method="POST">
-      <h2>The word is: {{sourceWord}}</h2>
-      <input type="hidden" name="source_word" value="{{sourceWord}}"/>
+      <h2>The word is: {{session['selected_word']}}</h2>
       Word 1: <input type="text" name="word1"><br>
       Word 2: <input type="text" name="word2"><br>
       Word 3: <input type="text" name="word3"><br>

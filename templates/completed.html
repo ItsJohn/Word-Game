@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body %}
+      <h2>{{title}}</h2>
+      {% block contents %}
+      {% endblock %}
+      <div onclick="window.location.href = '/'" style="cursor: pointer; padding: 10px; color: blue;width: 136px;border: blue thin solid;">
+            Click me to try again
+      </div>
+{% endblock %}
