@@ -2,13 +2,13 @@
 {% block body %}
 <form action="/checkscore" method="POST">
       <h2>The word is: {{session['selected_word']}}</h2>
-      Word 1: <input type="text" name="word1"><br>
-      Word 2: <input type="text" name="word2"><br>
-      Word 3: <input type="text" name="word3"><br>
-      Word 4: <input type="text" name="word4"><br>
-      Word 5: <input type="text" name="word5"><br>
-      Word 6: <input type="text" name="word6"><br>
-      Word 7: <input type="text" name="word7"><br>
+      Word 1: <input type="text" name="word1" required><br>
+      Word 2: <input type="text" name="word2" required><br>
+      Word 3: <input type="text" name="word3" required><br>
+      Word 4: <input type="text" name="word4" required><br>
+      Word 5: <input type="text" name="word5" required><br>
+      Word 6: <input type="text" name="word6" required><br>
+      Word 7: <input type="text" name="word7" required><br>
       <input type="submit" value="Submit">
 </form>
 {% endblock %}

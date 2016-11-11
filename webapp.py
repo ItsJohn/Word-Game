@@ -76,10 +76,16 @@ def validate_input(user_input, selected_word):
                 'color': 'green'
             }
         else:
-            user_input[user_input_key] = {
-                'word': user_input_value,
-                'color': 'red'
-            }
+            if ' ' in user_input_value:
+                user_input[user_input_key] = {
+                    'word': "Spaces aren't allowed",
+                    'color': 'orange'
+                }
+            else:
+                user_input[user_input_key] = {
+                    'word': user_input_value,
+                    'color': 'red'
+                }
             valid_word = False
 
     return valid_word, user_input
