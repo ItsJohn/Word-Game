@@ -7,4 +7,4 @@ This is a Python Project like the game Countdown. The user gets a word that is 7
 3. On your browser, go to `http://127.0.0.1:5000/`
 
 # More Information
-Open AssignmentSpecification.pdf for the complete specs
+Open `AssignmentSpecification.pdf` for the complete specs
